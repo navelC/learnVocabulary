@@ -12,9 +12,10 @@ namespace LearnVocab
 {
     public partial class QuizzResultForm : Form
     {
-        public QuizzResultForm()
+        public QuizzResultForm(string res)
         {
             InitializeComponent();
+            label1.Text = res;
         }
     }
 }

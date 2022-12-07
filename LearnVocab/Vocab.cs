@@ -6,24 +6,32 @@ using System.Threading.Tasks;
 
 namespace LearnVocab
 {
-    internal class Vocab
+    public class Vocab
     {
-        public string VSub {get; set; }
+        public string Vietnamese {get; set; }
+        public string English { get; set; }
         public List<Phonetic> Phonetics {get; set; }
         public List<ESub> ESubs { get; set; }
+        public int NumberOfTest { get; set; }
+        public int Passed { get; set; }
         public Vocab(string vSub, List<Phonetic> phonetics, List<ESub> eSubs)
         {
-            VSub = vSub;
+            NumberOfTest = 0;
+            Passed = 0;
+            Vietnamese = vSub;
             Phonetics = phonetics;
             ESubs = eSubs;
         }
+        public Vocab() {}
         public Vocab(List<Phonetic> phonetics, List<ESub> eSubs)
         {
+            Passed = 0;
+            NumberOfTest = 0;
             Phonetics = phonetics;
             ESubs = eSubs;
         }
     }
-    class Phonetic
+    public class Phonetic
     {
         public string Text { get; set; }
         public string Audio { get; set; }
@@ -32,8 +40,9 @@ namespace LearnVocab
             Text = text;
             Audio = audio;
         }
+        public Phonetic() { }
     }
-    class ESub
+    public class ESub
     {
         public string PartOfSpeech { get; set; }
         public List<Definition> Definitions { get; set; }
@@ -42,8 +51,9 @@ namespace LearnVocab
             PartOfSpeech = partOfSpeech;
             Definitions = definitions;
         }
+        public ESub() { }
     }
-    class Definition
+    public class Definition
     {
         public string Text { get; set; }
         public string Example { get; set; }
@@ -56,5 +66,6 @@ namespace LearnVocab
         {
             Text = text;
         }
+        public Definition() { }
     }
 }

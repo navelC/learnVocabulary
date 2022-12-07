@@ -16,7 +16,7 @@ namespace LearnVocab
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DefinationForm());
+            Application.Run(new Form2());
         }
     }
 }

@@ -16,5 +16,24 @@ namespace LearnVocab
         {
             InitializeComponent();
         }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+                button1_Click(null, null);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if(textBox1.Text != "")
+            {
+                new DefinationForm(textBox1.Text).ShowDialog();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            new Form1().Show();
+        }
     }
 }
