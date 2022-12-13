@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace LearnVocab
 {
-    public partial class Form2 : Form
+    public partial class MainForm : Form
     {
-        public Form2()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -33,7 +33,7 @@ namespace LearnVocab
 
         private void button2_Click(object sender, EventArgs e)
         {
-            new Form1().Show();
+            new VocabManagementForm().ShowDialog();
         }
     }
 }

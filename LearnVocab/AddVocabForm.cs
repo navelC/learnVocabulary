@@ -25,7 +25,7 @@ namespace LearnVocab
                 MessageBox.Show("phải điền đẩy đủ các trường");
                 return;
             }
-            string dataPath = "\\learnvocab\\LearnVocab\\Resources\\data.json";
+            string dataPath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
             var obj = JsonConvert.DeserializeObject<List<Vocab>>(System.IO.File.ReadAllText(dataPath));
             var vocab = new Vocab
             {

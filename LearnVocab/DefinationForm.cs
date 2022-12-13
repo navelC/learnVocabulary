@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -15,7 +16,7 @@ namespace LearnVocab
 {
     public partial class DefinationForm : Form
     {
-        string dataPath = "\\learnvocab\\LearnVocab\\Resources\\data.json";
+        string dataPath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
         static HttpClientHandler handle = new HttpClientHandler();
         static HttpClient client;
         Vocab vocab;
@@ -102,14 +103,13 @@ namespace LearnVocab
                         label4.MaximumSize = new Size(this.panel1.Width - x -40, 0);
                         label4.Text = def.Text;
                         this.panel1.Controls.Add(label4);
-                        y += label4.Height;
-
-                        if (def.Example != null || def.Example != "")
+                        if (def.Example != null && def.Example != "")
                         {
+                            y += label4.Height;
                             y += 20;
                             Label label5 = new Label();
                             label5.Location = new System.Drawing.Point(x + 40, y);
-                            label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                            label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                             label5.AutoSize = true;
                             label5.MaximumSize = new Size(this.panel1.Width - x - 40, 0);
                             label5.Text = def.Example;
@@ -128,11 +128,17 @@ namespace LearnVocab
         }
         private void PlaySound(object sender, EventArgs e)
         {
-            var path = ((PictureBox)sender).Tag.ToString();
-            var reader = new Mp3FileReader(path);
-            var waveOut = new WaveOut(); // or WaveOutEvent()
-            waveOut.Init(reader);
-            waveOut.Play();
+            var url = ((PictureBox)sender).Tag.ToString();
+            using (var mf = new MediaFoundationReader(url))
+            using (var wo = new WasapiOut())
+            {
+                wo.Init(mf);
+                wo.Play();
+                while (wo.PlaybackState == PlaybackState.Playing)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
             //MP3Stream stream = new MP3Stream(path);
             //if (stream.CanSeek) stream.Seek(0, System.IO.SeekOrigin.Begin);
             //System.Media.SoundPlayer player = new System.Media.SoundPlayer(stream);
@@ -172,7 +178,9 @@ namespace LearnVocab
                 {
                     try
                     {
-                        string ex = def.example.ToString();
+                        string ex = null;
+                        if(def.example != null)
+                            ex = def.example.ToString();
                         Definition definition;
                         if (ex is null) definition = new Definition(def.definition.ToString());
                         else definition = new Definition(def.definition.ToString(), ex);

@@ -1,6 +1,6 @@
 ﻿namespace LearnVocab
 {
-    partial class Form1
+    partial class VocabManagementForm
     {
         /// <summary>
         /// Required designer variable.

@@ -85,12 +85,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
+            this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(639, 502);
             this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
             this.Name = "DefinationForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form3";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

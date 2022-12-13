@@ -12,18 +12,18 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace LearnVocab
 {
-    public partial class Form1 : Form
+    public partial class VocabManagementForm : Form
     {
         List<CheckBox> checkBoxes = new List<CheckBox>();
         List<Vocab> vocabs;
-        public Form1()
+        public VocabManagementForm()
         {
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            string dataPath = "\\learnvocab\\LearnVocab\\Resources\\data.json";
+            string dataPath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
             vocabs = JsonConvert.DeserializeObject<List<Vocab>>(System.IO.File.ReadAllText(dataPath));
             foreach(var vocab in vocabs)
             {
