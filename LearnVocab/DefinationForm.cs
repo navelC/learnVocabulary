@@ -34,7 +34,7 @@ namespace LearnVocab
         {
             this.panel1.Controls.Clear();
             string vsub = await GetVSub(english);
-            vocab = await GetESub(english);
+            dynamic vocab = await GetESub(english);
             vocab.Vietnamese = vsub;
             vocab.English = english;
             if (vocab != null)
@@ -49,6 +49,7 @@ namespace LearnVocab
                         pic.Location = new System.Drawing.Point(x, y);
                         x += 30;
                         pic.Size = new System.Drawing.Size(25, 25);
+                        pic.Cursor = Cursors.Hand;
                         pic.Image = global::LearnVocab.Properties.Resources.Speaker_Icon_svg;
                         pic.SizeMode = PictureBoxSizeMode.Zoom;
                         pic.Tag = z.Audio;
@@ -76,6 +77,7 @@ namespace LearnVocab
                 label2.Height = 2;
                 label2.Width = panel1.Width-3;
                 this.panel1.Controls.Add(label2);
+                bool check = true;
                 foreach (var es in vocab.ESubs)
                 {
                     y += 40;
@@ -95,8 +97,14 @@ namespace LearnVocab
                         label3.AutoSize = true;
                         label3.Text = count.ToString();
                         this.panel1.Controls.Add(label3);
-                       
-                        Label label4 = new Label();
+
+                        RadioButton label4 = new RadioButton();
+                        if (check)
+                        {
+                            label4.Checked = true;
+                            check = false;
+                        }
+                        label4.CheckAlign = ContentAlignment.MiddleRight;
                         label4.Location = new System.Drawing.Point(x + 40, y);
                         label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         label4.AutoSize = true;
@@ -115,8 +123,8 @@ namespace LearnVocab
                             label5.Text = def.Example;
                             this.panel1.Controls.Add(label5);
                             y += label5.Height;
-                            count++;
                         }
+                        count++;
 
                     }
                 }
@@ -139,12 +147,8 @@ namespace LearnVocab
                     Thread.Sleep(1000);
                 }
             }
-            //MP3Stream stream = new MP3Stream(path);
-            //if (stream.CanSeek) stream.Seek(0, System.IO.SeekOrigin.Begin);
-            //System.Media.SoundPlayer player = new System.Media.SoundPlayer(stream);
-            //player.Play();
         }
-        private async Task<Vocab> GetESub(string english)
+        private async Task<Object> GetESub(string english)
         {
             string url = String.Format
             ("https://api.dictionaryapi.dev/api/v2/entries/en/"+english);
@@ -157,23 +161,32 @@ namespace LearnVocab
             string result = await response.Content.ReadAsStringAsync();
             dynamic json = JsonConvert.DeserializeObject(result);
             List<Phonetic> phonetics = new List<Phonetic>();
+            List<Object> phons = new List<Object>();
             foreach (var x in json[0].phonetics)
             {
                 try
                 {
-                    Phonetic phon = new Phonetic(x.text.ToString(), x.audio.ToString());
-                    phonetics.Add(phon);
+                    var phon = new
+                    {
+                        text = x.text,
+                        audio = x.audio,
+                    };
+                    phons.Add(phon);
+                    //Phonetic phon = new Phonetic(x.text.ToString(), x.audio.ToString());
+                    //phonetics.Add(phon);
                 }
                 catch
                 {
                     continue;
                 }
             }
-            List<ESub> esubs = new List<ESub>();
+            //List<ESub> esubs = new List<ESub>();
+            List<Object> esubs = new List<Object>();
             foreach (var mean in json[0].meanings)
             {
                 string PartOfSpeech = mean.partOfSpeech;
-                List<Definition> defs = new List<Definition>();
+                List<Object> defs = new List<Object>();
+                //List<Definition> defs = new List<Definition>();
                 foreach (var def in mean.definitions)
                 {
                     try
@@ -181,20 +194,31 @@ namespace LearnVocab
                         string ex = null;
                         if(def.example != null)
                             ex = def.example.ToString();
-                        Definition definition;
-                        if (ex is null) definition = new Definition(def.definition.ToString());
-                        else definition = new Definition(def.definition.ToString(), ex);
+                        //Definition definition;
+                        dynamic definition = new { definition = def.definition.ToString()};
+                        if (!(ex is null))
+                            definition.ex = ex;
                         defs.Add(definition);
+                        //if (ex is null)
+                        //definition = new Definition(def.definition.ToString());
+                        //else definition = new Definition(def.definition.ToString(), ex);
+                        //defs.Add(definition);
                     }
                     catch
                     {
                         continue;
                     }
                 }
-                ESub esub = new ESub(PartOfSpeech, defs);
+                //ESub esub = new ESub(PartOfSpeech, defs);
+                var esub = new
+                {
+                    PartOfSpeech,
+                    defs,
+                };
                 esubs.Add(esub);
             }
-            Vocab vocab = new Vocab(phonetics, esubs);
+            //Vocab vocab = new Vocab(phonetics, esubs);
+            var vocab = new {phons, esubs};
             return vocab;
         }
         private async Task<string> GetVSub(string text)
@@ -209,22 +233,8 @@ namespace LearnVocab
         }
         private void saveBtn_Click(object sender, EventArgs e)
         {
-            var obj = JsonConvert.DeserializeObject<List<Vocab>>(System.IO.File.ReadAllText(dataPath));
-            if (obj == null)
-            {
-                List<Vocab> list = new List<Vocab>();
-                list.Add(vocab);
-                string json = JsonConvert.SerializeObject(list.ToArray());
-                System.IO.File.WriteAllText("\\learnvocab\\LearnVocab\\Resources\\data.json", json);
-            }
-            else
-            {
-                obj.Add(vocab);
-                string json = JsonConvert.SerializeObject(obj.ToArray());
-                System.IO.File.WriteAllText("\\learnvocab\\LearnVocab\\Resources\\data.json", json);
-            }
+            new AddVocabForm1(vocab).ShowDialog();
             saveBtn.Visible = false;
-            MessageBox.Show("lưu thành công");
         }
     }
 }

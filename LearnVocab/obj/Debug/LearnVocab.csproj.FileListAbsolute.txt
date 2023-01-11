@@ -66,3 +66,4 @@ C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.AddVocabF
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.learnForm.resources
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.VocabManagementForm.resources
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.MainForm.resources
+C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.AddVocabForm1.resources

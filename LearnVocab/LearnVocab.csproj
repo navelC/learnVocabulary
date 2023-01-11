@@ -85,6 +85,15 @@
     <Compile Include="AddVocabForm.Designer.cs">
       <DependentUpon>AddVocabForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddVocabForm1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddVocabForm1.Designer.cs">
+      <DependentUpon>AddVocabForm1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\Category.cs" />
+    <Compile Include="DAL\DataProvider.cs" />
+    <Compile Include="TestJson.cs" />
     <Compile Include="VocabManagementForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,9 +132,12 @@
     <Compile Include="QuizzResultForm.Designer.cs">
       <DependentUpon>QuizzResultForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vocab.cs" />
+    <Compile Include="DAL\Vocab.cs" />
     <EmbeddedResource Include="AddVocabForm.resx">
       <DependentUpon>AddVocabForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddVocabForm1.resx">
+      <DependentUpon>AddVocabForm1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VocabManagementForm.resx">
       <DependentUpon>VocabManagementForm.cs</DependentUpon>
@@ -165,6 +177,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\test.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -172,6 +185,9 @@
   <ItemGroup>
     <None Include="Resources\data.json" />
     <None Include="Resources\Speaker_Icon.svg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BLL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
