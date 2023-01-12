@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,37 +9,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LearnVocab.DAL;
+using System.Collections;
 
 namespace LearnVocab
 {
     public partial class AddVocabForm1 : Form
     {
         Vocab vocab;
-        public AddVocabForm1(Vocab vocab)
+        Dictionary<string, MediaFoundationReader> dic;
+        public AddVocabForm1(Vocab vocab, Dictionary<string, MediaFoundationReader> dic)
         {
             InitializeComponent();
             this.vocab = vocab;
+            this.dic = dic;
+            loadCategory();   
+        }
+        private void loadCategory()
+        {
+            var cate = DataProvider.getInstance().category;
+            comboBox1.DataSource = cate;
+            comboBox1.DisplayMember = "Name";
+            comboBox1.ValueMember = "Name";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string filePath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
-            var obj = JsonConvert.DeserializeObject<List<Vocab>>(System.IO.File.ReadAllText(filePath));
+            string Path = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\";
+            foreach (KeyValuePair<string, MediaFoundationReader> entry in dic)
+            {
+                using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(entry.Value))
+                {
+                    WaveFileWriter.CreateWaveFile($"{Path}{vocab.English}-{entry.Key}.mp3", pcm);
+                    vocab.Phonetics.Where(c => c.Region == entry.Key).Single().Audio = $"{Path}{vocab.English}-{entry.Key}.mp3";
+                }
+            }
             vocab.Category = comboBox1.Text;
-            if (obj == null)
-            {
-                List<Vocab> list = new List<Vocab>();
-                list.Add(vocab);
-                string json = JsonConvert.SerializeObject(list.ToArray());
-                System.IO.File.WriteAllText(filePath, json);
-            }
-            else
-            {
-                obj.Add(vocab);
-                string json = JsonConvert.SerializeObject(obj.ToArray());
-                System.IO.File.WriteAllText(filePath, json);
-            }
-            MessageBox.Show("lưu thành công");
+            if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.True)
+                MessageBox.Show("lưu thành công");
+            else if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.Exist)
+                MessageBox.Show("từ vựng đã tồn tại");
+            else if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.False)
+                MessageBox.Show("lưu thất bại");
         }
     }
 }

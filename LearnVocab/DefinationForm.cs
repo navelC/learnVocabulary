@@ -4,47 +4,84 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace LearnVocab
 {
     public partial class DefinationForm : Form
     {
-        string dataPath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
         static HttpClientHandler handle = new HttpClientHandler();
         static HttpClient client;
-        Vocab vocab;
+        List<MediaFoundationReader> mfs = new List<MediaFoundationReader>();
         string english;
-        public DefinationForm(string english)
+        string define;
+        string type;
+        List<Phonetic> phonetics = new List<Phonetic>();
+        Dictionary<string, MediaFoundationReader> dic = new Dictionary<string, MediaFoundationReader>();
+        public DefinationForm()
         {
             InitializeComponent();
-            handle.Proxy = null;
-            handle.UseProxy = false;
+            this.labelEn.Visible = false;
+            this.saveBtn.Visible = false;
+            this.labelVSub.Visible = false;
             client = new HttpClient(handle);
-            this.english = english;
-            load();
         }
-        private async void load()
+        private async void load(string english)
         {
+            dic.Clear();
+            mfs.Clear();
+            phonetics.Clear();
+            saveBtn.Enabled = false;
+            labelEn.Text = english;
+            this.english = english;
             this.panel1.Controls.Clear();
             string vsub = await GetVSub(english);
-            dynamic vocab = await GetESub(english);
+            dynamic vocab = new ExpandoObject();
+            var en = await GetESub(english);
+            vocab.phons = en.GetType().GetProperty("phons").GetValue(en, null);
+            vocab.esubs = en.GetType().GetProperty("esubs").GetValue(en, null);
+            this.labelEn.Visible = true;
+            this.saveBtn.Visible = true;
+            this.labelVSub.Visible = true;
             vocab.Vietnamese = vsub;
             vocab.English = english;
             if (vocab != null)
             {
                 int x = 3;
                 int y = 61;
-                foreach(var z in vocab.Phonetics)
+                int phonsCount = 0;
+                foreach(var z in vocab.phons)
                 {
-                    if( z.Audio != "")
+                    string pattern = @"\.\w+";
+                    var matches = Regex.Matches(z.audio.ToString(), pattern);
+                    string ex = "";
+                    foreach (Match m in matches)
                     {
+                        ex = m.Value;
+                    }
+                    if (z.audio != "" && ex == ".mp3")
+                    {
+                        Label label1 = new Label();
+                        label1.Location = new System.Drawing.Point(x, y);
+                        label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                        label1.AutoSize = true;
+                        label1.Text = z.region;
+                        x += 30;
+                        this.panel1.Controls.Add(label1);
+
                         PictureBox pic = new PictureBox();
                         pic.Location = new System.Drawing.Point(x, y);
                         x += 30;
@@ -52,17 +89,20 @@ namespace LearnVocab
                         pic.Cursor = Cursors.Hand;
                         pic.Image = global::LearnVocab.Properties.Resources.Speaker_Icon_svg;
                         pic.SizeMode = PictureBoxSizeMode.Zoom;
-                        pic.Tag = z.Audio;
+                        pic.Tag = phonsCount;
+                        var mf = new MediaFoundationReader(z.audio.ToString());
+                        mfs.Add(mf);
+                        dic.Add(z.region.ToString(), mf);
+                        phonsCount++;
                         pic.Click += PlaySound;
                         this.panel1.Controls.Add(pic);
-
 
                         Label label = new Label();
                         label.Location = new System.Drawing.Point(x, y);
                         x += 30;
                         label.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         label.AutoSize = true;
-                        label.Text = z.Text;
+                        label.Text = z.text;
                         x += label.Size.Width;
                         this.panel1.Controls.Add(label);
                     }
@@ -78,7 +118,7 @@ namespace LearnVocab
                 label2.Width = panel1.Width-3;
                 this.panel1.Controls.Add(label2);
                 bool check = true;
-                foreach (var es in vocab.ESubs)
+                foreach (var es in vocab.esubs)
                 {
                     y += 40;
                     Label label = new Label();
@@ -88,7 +128,7 @@ namespace LearnVocab
                     label.Text = es.PartOfSpeech;
                     this.panel1.Controls.Add(label);
                     int count = 1;
-                    foreach (var def in es.Definitions)
+                    foreach (var def in es.defs)
                     {
                         y += 40;
                         Label label3 = new Label();
@@ -99,19 +139,23 @@ namespace LearnVocab
                         this.panel1.Controls.Add(label3);
 
                         RadioButton label4 = new RadioButton();
-                        if (check)
-                        {
-                            label4.Checked = true;
-                            check = false;
-                        }
-                        label4.CheckAlign = ContentAlignment.MiddleRight;
+                        label4.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
                         label4.Location = new System.Drawing.Point(x + 40, y);
                         label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         label4.AutoSize = true;
-                        label4.MaximumSize = new Size(this.panel1.Width - x -40, 0);
-                        label4.Text = def.Text;
+                        label4.MaximumSize = new Size(this.panel1.Width - x -80, 0);
+                        label4.Text = def.text;
+                        label4.Tag = es.PartOfSpeech;
+                        if (check)
+                        {
+                            define = def.text;
+                            type = es.PartOfSpeech.ToString();
+                            label4.Checked = true;
+                            check = false;
+                        }
+                        label4.CheckedChanged += RadioChange;
                         this.panel1.Controls.Add(label4);
-                        if (def.Example != null && def.Example != "")
+                        if (def.ex != null && def.ex != "")
                         {
                             y += label4.Height;
                             y += 20;
@@ -120,7 +164,7 @@ namespace LearnVocab
                             label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                             label5.AutoSize = true;
                             label5.MaximumSize = new Size(this.panel1.Width - x - 40, 0);
-                            label5.Text = def.Example;
+                            label5.Text = def.ex;
                             this.panel1.Controls.Add(label5);
                             y += label5.Height;
                         }
@@ -131,22 +175,34 @@ namespace LearnVocab
             }
             labelVSub.Text = vocab.Vietnamese;
             this.panel1.Controls.Add(labelVSub);
-            saveBtn.Visible = true;
+            saveBtn.Enabled = true;
 
+        }
+        private void RadioChange(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked == true)
+            {
+                define = ((RadioButton)sender).Text;
+                type = ((RadioButton)sender).Tag.ToString();
+            }
         }
         private void PlaySound(object sender, EventArgs e)
         {
-            var url = ((PictureBox)sender).Tag.ToString();
-            using (var mf = new MediaFoundationReader(url))
+            var index = Int32.Parse(((PictureBox)sender).Tag.ToString());
             using (var wo = new WasapiOut())
             {
-                wo.Init(mf);
+                mfs[index].Seek(0, SeekOrigin.Begin);
+                wo.Init(mfs[index]);
                 wo.Play();
                 while (wo.PlaybackState == PlaybackState.Playing)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10);
                 }
+                wo.Dispose();
+                mfs[index].Dispose();
+               
             }
+         
         }
         private async Task<Object> GetESub(string english)
         {
@@ -160,25 +216,33 @@ namespace LearnVocab
 
             string result = await response.Content.ReadAsStringAsync();
             dynamic json = JsonConvert.DeserializeObject(result);
-            List<Phonetic> phonetics = new List<Phonetic>();
+            //List<Phonetic> phonetics = new List<Phonetic>();
             List<Object> phons = new List<Object>();
+            string pattern = @"\w+(?=\.mp3)";
             foreach (var x in json[0].phonetics)
             {
                 try
                 {
                     var phon = new
                     {
+                        region = Regex.Match(x.audio.ToString(), pattern).Value,
                         text = x.text,
                         audio = x.audio,
                     };
-                    phons.Add(phon);
-                    //Phonetic phon = new Phonetic(x.text.ToString(), x.audio.ToString());
-                    //phonetics.Add(phon);
+                    if(phon.audio.ToString() != "" && phon.text.ToString() != "")
+                    {
+                        phons.Add(phon);
+                        phonetics.Add(new Phonetic(phon.text.ToString(), phon.audio.ToString(), phon.region.ToString()));
+                    }
                 }
                 catch
                 {
                     continue;
                 }
+                    
+                    //Phonetic phon = new Phonetic(x.text.ToString(), x.audio.ToString());
+                    //phonetics.Add(phon);
+               
             }
             //List<ESub> esubs = new List<ESub>();
             List<Object> esubs = new List<Object>();
@@ -191,14 +255,20 @@ namespace LearnVocab
                 {
                     try
                     {
-                        string ex = null;
                         if(def.example != null)
-                            ex = def.example.ToString();
+                        {
+                            dynamic definition = new { text = def.definition.ToString(), ex = def.example.ToString() };
+                            defs.Add(definition);
+
+                        }
+                        else
+                        {
+                            dynamic definition = new { text = def.definition.ToString(), ex = ""};
+                            defs.Add(definition);
+
+                        }
                         //Definition definition;
-                        dynamic definition = new { definition = def.definition.ToString()};
-                        if (!(ex is null))
-                            definition.ex = ex;
-                        defs.Add(definition);
+
                         //if (ex is null)
                         //definition = new Definition(def.definition.ToString());
                         //else definition = new Definition(def.definition.ToString(), ex);
@@ -233,8 +303,25 @@ namespace LearnVocab
         }
         private void saveBtn_Click(object sender, EventArgs e)
         {
-            new AddVocabForm1(vocab).ShowDialog();
-            saveBtn.Visible = false;
+            Vocab vocab = new Vocab(phonetics, new ESub(type, define));
+            vocab.English = english;
+            vocab.Vietnamese = labelVSub.Text;
+            new AddVocabForm1(vocab, dic).ShowDialog();
+            //saveBtn.Visible = false;
+        }
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+                button1_Click(null, null);
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Text != "")
+            {
+                load(textBox1.Text);
+            }
+            else
+                MessageBox.Show("bạn chưa nhập từ vào");
         }
     }
 }

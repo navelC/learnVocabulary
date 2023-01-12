@@ -49,10 +49,10 @@
             this.maskedTextBox1.BackColor = System.Drawing.SystemColors.Control;
             this.maskedTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.maskedTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maskedTextBox1.Location = new System.Drawing.Point(174, 132);
-            this.maskedTextBox1.Mask = "aaaaaaaaa";
+            this.maskedTextBox1.Location = new System.Drawing.Point(140, 132);
+            this.maskedTextBox1.Mask = "aaaaaaaaaaaaaaaaaaaa";
             this.maskedTextBox1.Name = "maskedTextBox1";
-            this.maskedTextBox1.Size = new System.Drawing.Size(100, 19);
+            this.maskedTextBox1.Size = new System.Drawing.Size(183, 19);
             this.maskedTextBox1.TabIndex = 1;
             this.maskedTextBox1.TextChanged += new System.EventHandler(this.maskedTextBox1_TextChanged);
             // 

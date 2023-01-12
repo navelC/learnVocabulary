@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace LearnVocab
 {
-    internal class Category
+    public class Category
     {
-        string Name { get; set; }
+        public string Name { get; set; }
         public Category(string name)
         {
             Name = name;

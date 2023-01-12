@@ -48,21 +48,30 @@ namespace LearnVocab
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (input.Count <= current)
+            {
+                string test = maskedTextBox1.Text.Trim();
+                input.Add(test);
+
+            }
+            else
+            {
+                input[current] = maskedTextBox1.Text;
+            }
             current++;
-            if(current == count)
+            maskedTextBox1.Clear();
+            maskedTextBox1.Focus();
+            if (current == count)
             {
                 int correct = 0;
                 for(int i =0; i< count; i++)
                 {
                     if (input[i] == vocabs[i].English) correct++;
                 }
-                new QuizzResultForm(correct + "/" + count).ShowDialog();
+                new learnForm(vocabs, correct + "/" + count, input).Show();
+                this.Dispose();
                 return;
 
-            }
-            if (input.Count <= current)
-            {
-                input.Add("");
             }
             load();
 
@@ -70,14 +79,16 @@ namespace LearnVocab
 
         private void maskedTextBox1_TextChanged(object sender, EventArgs e)
         {
-            if (input.Count <= current)
-            {
-                input.Add(maskedTextBox1.Text);
-            }
-            else
-            {
-                input[current] = maskedTextBox1.Text;
-            }
+            //if (input.Count <= current)
+            //{
+            //    string test = maskedTextBox1.Text;
+            //    input.Add(maskedTextBox1.Text);
+
+            //}
+            //else
+            //{
+            //    input[current] = maskedTextBox1.Text;
+            //}
         }
     }
 }

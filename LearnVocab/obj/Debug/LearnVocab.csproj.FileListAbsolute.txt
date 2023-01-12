@@ -21,8 +21,6 @@ D:\learnvocab\LearnVocab\bin\Debug\Newtonsoft.Json.dll
 D:\learnvocab\LearnVocab\bin\Debug\Newtonsoft.Json.xml
 D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.csproj.AssemblyReference.cache
 D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.csproj.SuggestedBindingRedirects.cache
-D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.Form1.resources
-D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.Form2.resources
 D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.Properties.Resources.resources
 D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.QuizzForm.resources
 D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.QuizzResultForm.resources
@@ -67,3 +65,9 @@ C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.learnForm
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.VocabManagementForm.resources
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.MainForm.resources
 C:\Users\boong\source\repos\LearnVocab\LearnVocab\obj\Debug\LearnVocab.AddVocabForm1.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.AddVocabForm1.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.VocabManagementForm.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.MainForm.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.TestForm.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.VocabForm.resources
+D:\learnvocab\LearnVocab\obj\Debug\LearnVocab.QuizzForm2.resources

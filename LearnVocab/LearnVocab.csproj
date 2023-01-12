@@ -93,7 +93,27 @@
     </Compile>
     <Compile Include="DAL\Category.cs" />
     <Compile Include="DAL\DataProvider.cs" />
+    <Compile Include="DAL\Test.cs" />
+    <Compile Include="DAL\VocabEnum.cs" />
+    <Compile Include="QuizzForm2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QuizzForm2.Designer.cs">
+      <DependentUpon>QuizzForm2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestForm.Designer.cs">
+      <DependentUpon>TestForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestJson.cs" />
+    <Compile Include="VocabForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VocabForm.Designer.cs">
+      <DependentUpon>VocabForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="VocabManagementForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -138,6 +158,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AddVocabForm1.resx">
       <DependentUpon>AddVocabForm1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QuizzForm2.resx">
+      <DependentUpon>QuizzForm2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestForm.resx">
+      <DependentUpon>TestForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VocabForm.resx">
+      <DependentUpon>VocabForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VocabManagementForm.resx">
       <DependentUpon>VocabManagementForm.cs</DependentUpon>

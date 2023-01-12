@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LearnVocab.DAL;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,36 +17,39 @@ namespace LearnVocab
         public AddVocabForm()
         {
             InitializeComponent();
+            loadCategory();
+        }
+        private void loadCategory()
+        {
+            var cate = DataProvider.getInstance().category;
+            comboBox2.DataSource = cate;
+            comboBox2.DisplayMember = "Name";
+            comboBox2.ValueMember = "Name";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if ( entxtbox.Text == "" || entxtbox.Text == "")
+            if ( entxtbox.Text == "" || vntxtbox.Text == "")
             {
                 MessageBox.Show("phải điền đẩy đủ các trường");
                 return;
             }
-            string dataPath = "..\\..\\..\\..\\learnvocab\\LearnVocab\\Resources\\data.json";
-            var obj = JsonConvert.DeserializeObject<List<Vocab>>(System.IO.File.ReadAllText(dataPath));
+            ESub ESubs = new ESub();
+            ESubs.PartOfSpeech = comboBox1.Text;
             var vocab = new Vocab
             {
                 English = entxtbox.Text,
                 Vietnamese = vntxtbox.Text,
+                ESubs = ESubs,
+                Category = comboBox2.Text,
+
             };
-            if (obj == null)
-            {
-                List<Vocab> list = new List<Vocab>();
-                list.Add(vocab);
-                string json = JsonConvert.SerializeObject(list.ToArray());
-                System.IO.File.WriteAllText("\\learnvocab\\LearnVocab\\Resources\\data.json", json);
-            }
-            else
-            {
-                obj.Add(vocab);
-                string json = JsonConvert.SerializeObject(obj.ToArray());
-                System.IO.File.WriteAllText("\\learnvocab\\LearnVocab\\Resources\\data.json", json);
-            }
-            MessageBox.Show("thêm thành công");
+            if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.True)
+                MessageBox.Show("lưu thành công");
+            else if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.Exist)
+                MessageBox.Show("từ vựng đã tồn tại");
+            else if (DataProvider.getInstance().AddVocab(vocab) == (int)VocabEnum.False)
+                MessageBox.Show("lưu thất bại");
         }
     }
 }
